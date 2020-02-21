@@ -30,8 +30,11 @@
 /*
  当我们开始执行程序时：
 
-  1. 调用runGame运行我们的游戏
-  2. 在runGame里面
+  1. 先执行 constructor 构造函数
+  2. 构造函数执行完成后进行egret.Event.ADDED_TO_STAGE事件发生时，执行egret.Event.ADDED_TO_STAGE事件发生时，执行egret.Event.ADDED_TO_STAGE事件
+  3. 由于在constructor中监听了egret.Event.ADDED_TO_STAGE事件的执行，所以会执行onAddToStage方法
+  4. 在this.onAddToStage方法中会调用runGame运行我们的游戏
+  5. 在runGame里面
       1. 调用loadResource加载资源
       2. 调用createGameScene创建游戏场景
       3. 使用getResAsync读取描述文件
@@ -49,11 +52,12 @@ class Main extends egret.DisplayObjectContainer {
         super();
         //这行代码保证了onAddToStage方法执行时，文档类实例已被添加到舞台中，并且在onAddToStage方法内，this.stage 属性已经有效，其指向舞台对象。
         // stag表示舞台，就是游戏中用户能看到的那块
-        this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
+        this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);//当egret.Event.ADDED_TO_STAGE事件发生时，执行this.onAddToStage方法
     }
 
     // 将显示内容添加到舞台
     private onAddToStage(event: egret.Event) {
+        console.log("onAddToStage方法")
 
         egret.lifecycle.addLifecycleListener((context) => {
             // custom lifecycle plugin
@@ -71,6 +75,7 @@ class Main extends egret.DisplayObjectContainer {
             egret.ticker.resume();
         }
 
+        //将显示内容添加到舞台后，开始运行我们的游戏
         this.runGame().catch(e => {
             console.log(e);
         })
@@ -81,6 +86,8 @@ class Main extends egret.DisplayObjectContainer {
 
     // 运行游戏时就是执行此方法
     private async runGame() {
+        console.log("runGame方法")
+
         await this.loadResource() //先加载资源
         this.createGameScene();//然后开始创建游戏场景
         const result = await RES.getResAsync("description_json")//然后读取描述文件，resource/config/description.json
@@ -204,7 +211,7 @@ class Main extends egret.DisplayObjectContainer {
             // Switch to described content
             textfield.textFlow = textFlow;//设置富文本值
             let tw = egret.Tween.get(textfield);
-            tw.to({ "alpha": 1 }, 200);
+            tw.to({ "alpha": 1 }, 200); //alpha表示透明度，1表示完全不透明，0表示完全透明
             tw.wait(2000);
             tw.to({ "alpha": 0 }, 200);
             tw.call(change, this);
