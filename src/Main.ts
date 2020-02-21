@@ -50,9 +50,12 @@ class Main extends egret.DisplayObjectContainer {
     // 初始化构造函数
     public constructor() {
         super();
-        //这行代码保证了onAddToStage方法执行时，文档类实例已被添加到舞台中，并且在onAddToStage方法内，this.stage 属性已经有效，其指向舞台对象。
-        // stag表示舞台，就是游戏中用户能看到的那块
-        this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);//当egret.Event.ADDED_TO_STAGE事件发生时，执行this.onAddToStage方法
+        //这行代码表示：当文档类主容器添加到舞台上后，执行this.onAddToStage方法。即保证了在onAddToStage方法内，this.stage 属性已经有效，其指向舞台对象。
+        // stag表示舞台，就是游戏中用户能看到的那块页面，所有内容都将在舞台stag中显示
+        //显示层级：舞台stage-->主容器-文档类Main.ts--->容器类显示对象---》非容器类显示对象
+        this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
+        //egret.Event.ADDED_TO_STAGE：主容器添加到舞台上时的事件名
+        
     }
 
     // 将显示内容添加到舞台
@@ -75,6 +78,8 @@ class Main extends egret.DisplayObjectContainer {
             egret.ticker.resume();
         }
 
+ 
+
         //将显示内容添加到舞台后，开始运行我们的游戏
         this.runGame().catch(e => {
             console.log(e);
@@ -87,7 +92,6 @@ class Main extends egret.DisplayObjectContainer {
     // 运行游戏时就是执行此方法
     private async runGame() {
         console.log("runGame方法")
-
         await this.loadResource() //先加载资源
         this.createGameScene();//然后开始创建游戏场景
         const result = await RES.getResAsync("description_json")//然后读取描述文件，resource/config/description.json
@@ -95,6 +99,8 @@ class Main extends egret.DisplayObjectContainer {
         await platform.login();//获取登录用户信息
         const userInfo = await platform.getUserInfo();
         console.log(userInfo);
+
+
     }
 
     //加载游戏资源的方法
