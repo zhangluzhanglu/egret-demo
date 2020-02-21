@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Egret</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="full-screen" content="true" />
+    <meta name="screen-orientation" content="portrait" />
+    <meta name="x5-fullscreen" content="true" />
+    <meta name="360-fullscreen" content="true" />
+    <style>
+        html, body {
+            -ms-touch-action: none;
+            background: #888888;
+            padding: 0;
+            border: 0;
+            margin: 0;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <!--承载页面内容的div,设置了写默认的参数-->
+
+    <!--showAll fixedWidth-->
+    <div style="margin: auto;width: 100%;height: 100%;" 
+    class="egret-player" 
+    data-entry-class="Main" 
+    data-orientation="auto" 
+    data-scale-mode="showAll"
+     data-frame-rate="30" 
+     data-content-width="640" 
+     data-content-height="1136" 
+     data-multi-fingered="2" 
+     data-show-fps="false" 
+     data-show-log="false" 
+     data-show-fps-style="x:0,y:0,size:12,textColor:0xffffff,bgAlpha:0.9">
+</div>
+<script>
+    // 下面整体执行的顺序：先发ajax请获取所有的文件，然后调用loadScript去加载所有文件，再然后在loadScript里面调用loadSingleScript方法对文件进行逐个加载
+    //发一个ajax请求获取所有需要的js文件
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', './manifest.json?v=' + Math.random(), true);
+    xhr.addEventListener("load", function () {
+        var manifest = JSON.parse(xhr.response);
+        var list = manifest.initial.concat(manifest.game);
+        loadScript(list, function () {
+            /**
+             * {
+             * "renderMode":, //Engine rendering mode, "canvas" or "webgl"
+             * "audioType": 0 //Use the audio type, 0: default, 2: web audio, 3: audio
+             * "antialias": //Whether the anti-aliasing is enabled in WebGL mode, true: on, false: off, defaults to false
+             * "calculateCanvasScaleFactor": //a function return canvas scale factor
+             * }
+             **/
+            egret.runEgret({
+                renderMode: "webgl", audioType: 0, calculateCanvasScaleFactor: function (context) {
+                    var backingStore = context.backingStorePixelRatio ||
+                        context.webkitBackingStorePixelRatio ||
+                        context.mozBackingStorePixelRatio ||
+                        context.msBackingStorePixelRatio ||
+                        context.oBackingStorePixelRatio ||
+                        context.backingStorePixelRatio || 1;
+                    return (window.devicePixelRatio || 1) / backingStore;
+                }
+            });
+        });
+    });
+    xhr.send(null);
+    //加载所有js文件的方法，接收文件列表参数和加载完成后的回调函数参数
+    var loadScript = function (list, callback) {
+        var loaded = 0;
+        var loadNext = function () {
+            loadSingleScript(list[loaded], function () {
+                loaded++;
+                if (loaded >= list.length) {
+                    callback();
+                }
+                else {
+                    loadNext();
+                }
+            })
+        };
+        loadNext();
+    };
+    //加载所有单个js文件的方法，与加载完成后的回调函数参数
+    var loadSingleScript = function (src, callback) {
+        var s = document.createElement('script');
+        s.async = false;
+        s.src = src;
+        s.addEventListener('load', function () {
+            s.parentNode.removeChild(s);
+            s.removeEventListener('load', arguments.callee, false);
+            callback();
+        }, false);
+        document.body.appendChild(s);
+    };
+</script>
+</body>
+
+</html>
