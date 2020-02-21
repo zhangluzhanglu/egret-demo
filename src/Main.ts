@@ -177,7 +177,7 @@ class Main extends egret.DisplayObjectContainer {
      */
     private createBitmapByName(name: string) {
         let result = new egret.Bitmap();
-        let texture: egret.Texture = RES.getRes(name);
+        let texture: egret.Texture = RES.getRes(name); //读取文件的真正api
         result.texture = texture;
         return result;
     }
@@ -189,9 +189,10 @@ class Main extends egret.DisplayObjectContainer {
     private startAnimation(result: string[]) {
         let parser = new egret.HtmlTextParser();
 
-        let textflowArr = result.map(text => parser.parse(text));
+        let textflowArr = result.map(text => parser.parse(text)); //把每个字符串形式的html内容转换为正在的html内容
         let textfield = this.textfield;
         let count = -1;
+        //通过递归调用change函数，实现一个动画
         let change = () => {
             count++;
             if (count >= textflowArr.length) {
@@ -201,7 +202,7 @@ class Main extends egret.DisplayObjectContainer {
 
             // 切换描述内容
             // Switch to described content
-            textfield.textFlow = textFlow;
+            textfield.textFlow = textFlow;//设置富文本值
             let tw = egret.Tween.get(textfield);
             tw.to({ "alpha": 1 }, 200);
             tw.wait(2000);

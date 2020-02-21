@@ -226,7 +226,7 @@ var Main = (function (_super) {
      */
     Main.prototype.createBitmapByName = function (name) {
         var result = new egret.Bitmap();
-        var texture = RES.getRes(name);
+        var texture = RES.getRes(name); //读取文件的真正api
         result.texture = texture;
         return result;
     };
@@ -237,9 +237,10 @@ var Main = (function (_super) {
     Main.prototype.startAnimation = function (result) {
         var _this = this;
         var parser = new egret.HtmlTextParser();
-        var textflowArr = result.map(function (text) { return parser.parse(text); });
+        var textflowArr = result.map(function (text) { return parser.parse(text); }); //把每个字符串形式的html内容转换为正在的html内容
         var textfield = this.textfield;
         var count = -1;
+        //通过递归调用change函数，实现一个动画
         var change = function () {
             count++;
             if (count >= textflowArr.length) {
@@ -248,7 +249,7 @@ var Main = (function (_super) {
             var textFlow = textflowArr[count];
             // 切换描述内容
             // Switch to described content
-            textfield.textFlow = textFlow;
+            textfield.textFlow = textFlow; //设置富文本值
             var tw = egret.Tween.get(textfield);
             tw.to({ "alpha": 1 }, 200);
             tw.wait(2000);
