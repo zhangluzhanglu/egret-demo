@@ -198,6 +198,12 @@ var Main = (function (_super) {
         this.addChild(icon);
         icon.x = 26;
         icon.y = 33;
+        //给logo增加点击事件
+        icon.touchEnabled = true;
+        icon.addEventListener(egret.TouchEvent.TOUCH_TAP, onClick, this);
+        function onClick() {
+            alert("6666666");
+        }
         //画了一条充填了颜色的竖线
         var line = new egret.Shape();
         line.graphics.lineStyle(2, 0xffffff);

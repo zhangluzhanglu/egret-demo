@@ -55,7 +55,7 @@ class Main extends egret.DisplayObjectContainer {
         //显示层级：舞台stage-->主容器-文档类Main.ts--->容器类显示对象---》非容器类显示对象
         this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
         //egret.Event.ADDED_TO_STAGE：主容器添加到舞台上时的事件名
-        
+
     }
 
     // 将显示内容添加到舞台
@@ -78,7 +78,7 @@ class Main extends egret.DisplayObjectContainer {
             egret.ticker.resume();
         }
 
- 
+
 
         //将显示内容添加到舞台后，开始运行我们的游戏
         this.runGame().catch(e => {
@@ -147,6 +147,12 @@ class Main extends egret.DisplayObjectContainer {
         this.addChild(icon);
         icon.x = 26;
         icon.y = 33;
+       //给logo增加点击事件
+        icon.touchEnabled = true;
+        icon.addEventListener(egret.TouchEvent.TOUCH_TAP, onClick, this);
+        function onClick(): void {
+            alert("6666666")
+        }
 
         //画了一条充填了颜色的竖线
         let line = new egret.Shape();
