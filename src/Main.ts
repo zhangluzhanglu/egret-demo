@@ -147,7 +147,7 @@ class Main extends egret.DisplayObjectContainer {
         this.addChild(icon);
         icon.x = 26;
         icon.y = 33;
-       //给logo增加点击事件
+        //给logo增加点击事件
         icon.touchEnabled = true;
         icon.addEventListener(egret.TouchEvent.TOUCH_TAP, onClick, this);
         function onClick(): void {
@@ -188,6 +188,13 @@ class Main extends egret.DisplayObjectContainer {
         this.textfield = textfield;
 
 
+        // //画几个矩形
+        // var _myGrid: MyGrid = new MyGrid();
+        // this.addChild(_myGrid);
+
+        //元素平移
+        var py: PinYi = new PinYi();
+        this.addChild(py.pin_yi(this));
     }
 
     /**

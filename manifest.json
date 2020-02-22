@@ -11,6 +11,7 @@
 		"bin-debug/LoadingUI.js",
 		"bin-debug/Main.js",
 		"bin-debug/Platform.js",
-		"bin-debug/study/MyGrid.js"
+		"bin-debug/study/MyGrid.js",
+		"bin-debug/study/PinYi.js"
 	]
 }

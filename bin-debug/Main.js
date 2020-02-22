@@ -234,6 +234,12 @@ var Main = (function (_super) {
         textfield.x = 172;
         textfield.y = 135;
         this.textfield = textfield;
+        // //画几个矩形
+        // var _myGrid: MyGrid = new MyGrid();
+        // this.addChild(_myGrid);
+        //元素平移
+        var py = new PinYi();
+        this.addChild(py.pin_yi(this));
     };
     /**
      * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
