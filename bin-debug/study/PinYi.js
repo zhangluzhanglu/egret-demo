@@ -26,6 +26,9 @@ var PinYi = (function (_super) {
         circle.graphics.endFill();
         circle.x = 100;
         circle.y = 300;
+        //缩放对象的大小
+        circle.scaleX = 2;
+        circle.scaleY = 2;
         // that.addChild(circle);  //正式使用时需要这行代码，或者直接在容器类里面使用时直接添加此实例
         /*
            下面不是直接监听的手指移动事件，而是先监听了手指按下和抬起的事件，然后在按下里面监听移动事件，在抬起时删除移动监听

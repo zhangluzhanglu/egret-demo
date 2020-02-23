@@ -31,8 +31,8 @@
  当我们开始执行程序时：
 
   1. 先执行 constructor 构造函数
-  2. 构造函数执行完成后进行egret.Event.ADDED_TO_STAGE事件发生时，执行egret.Event.ADDED_TO_STAGE事件发生时，执行egret.Event.ADDED_TO_STAGE事件
-  3. 由于在constructor中监听了egret.Event.ADDED_TO_STAGE事件的执行，所以会执行onAddToStage方法
+  2. 构造函数执行完成后执行egret.Event.ADDED_TO_STAGE事件
+  3. 由于在constructor中监听了egret.Event.ADDED_TO_STAGE事件的执行，所以会执行onAddToStage方法，从而确保文档类this可以在后续的方法中使用
   4. 在this.onAddToStage方法中会调用runGame运行我们的游戏
   5. 在runGame里面
       1. 调用loadResource加载资源
@@ -50,6 +50,7 @@ class Main extends egret.DisplayObjectContainer {
     // 初始化构造函数
     public constructor() {
         super();
+        this.sortableChildren = true;//注意，一定要设置为true，为了使用zIndex
         //这行代码表示：当文档类主容器添加到舞台上后，执行this.onAddToStage方法。即保证了在onAddToStage方法内，this.stage 属性已经有效，其指向舞台对象。
         // stag表示舞台，就是游戏中用户能看到的那块页面，所有内容都将在舞台stag中显示
         //显示层级：舞台stage-->主容器-文档类Main.ts--->容器类显示对象---》非容器类显示对象
@@ -126,13 +127,20 @@ class Main extends egret.DisplayObjectContainer {
      */
     private createGameScene() {
         // 显示背景图（如果需要更换需要先把图放入到resource里面）
-        let sky = this.createBitmapByName("bg1_jpg");//将图片显示到页面上（有点类似于Java和c#做gui开发时的代码操作）
+        let sky = this.createBitmapByName("bg_jpg");//将图片显示到页面上（有点类似于Java和c#做gui开发时的代码操作）
         this.addChild(sky);
         //获取舞台的宽高，并把此宽高设置为图片的宽高
         let stageW = this.stage.stageWidth;
         let stageH = this.stage.stageHeight;
         sky.width = stageW;
         sky.height = stageH;
+
+        //创建另一个位图显示对象
+        let sky0 = this.createBitmapByName("bg1_jpg");
+        sky0.width = stageW;
+        sky0.height = stageH;
+        this.addChildAt(sky0, 1);
+
 
         //画一个矩形，显示logo和相关文字
         let topMask = new egret.Shape();
@@ -151,7 +159,39 @@ class Main extends egret.DisplayObjectContainer {
         icon.touchEnabled = true;
         icon.addEventListener(egret.TouchEvent.TOUCH_TAP, onClick, this);
         function onClick(): void {
-            alert("6666666")
+
+             //两种方式获取显示对象并修改相关属性
+            // var tit = this.getChildAt(5); //通过深度值获取hello那个标题
+            // var tit = this.getChildByName("tit"); //通过显示对象名获取hello那个标题
+            // tit.alpha = 0.1;
+
+            //更换背景图饭方式一
+            // this.addChildAt(sky0, 1);
+            //更换背景图饭方式二
+            // this.swapChildrenAt( 0, 1 );
+
+            //重设子对象深度方式一
+            // this.setChildIndex(sky, 1)
+            //重设子对象深度方式二（在 PC 的 Chrome 浏览器和安卓系统中，zIndex 的效率比 setChildIndex 高很多。极限测试时可以达到10倍以上。）
+            // sky.zIndex = 1;//对文档类对象无效吗？
+
+            //交换两个背景图，切换时必须两个图都在容器里面
+            // this.swapChildren(sky0, sky);
+
+            //删除所有子元素显示对象
+            // this.removeChildren()
+
+            //弹框打印拥有的所有子元素数量
+            // alert(this.numChildren)
+
+            //删除矩形，由于点击事件是在所有元素渲染完成后执行的，所以可以删除任何元素
+            // this.removeChild(topMask);//直接删除
+            // if (topMask.parent) { //判断后删除
+            //     topMask.parent.removeChild(topMask);
+            // }
+            // else{
+            //     alert("已经被删除了")
+            // }
         }
 
         //画了一条充填了颜色的竖线
@@ -166,6 +206,7 @@ class Main extends egret.DisplayObjectContainer {
 
         //创建要显示的文本
         let colorLabel = new egret.TextField();
+        colorLabel.name = "tit";
         colorLabel.textColor = 0xffffff;
         colorLabel.width = stageW - 172;
         colorLabel.textAlign = "center";
